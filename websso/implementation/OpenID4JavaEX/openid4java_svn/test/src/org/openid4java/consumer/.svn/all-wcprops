@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/631/trunk/test/src/org/openid4java/consumer
+END
+EhcacheNonceVerifierTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/464/trunk/test/src/org/openid4java/consumer/EhcacheNonceVerifierTest.java
+END
+AbstractNonceVerifierTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/464/trunk/test/src/org/openid4java/consumer/AbstractNonceVerifierTest.java
+END
+InjectionTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/631/trunk/test/src/org/openid4java/consumer/InjectionTest.java
+END
+ConsumerAssociationStoreTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/464/trunk/test/src/org/openid4java/consumer/ConsumerAssociationStoreTest.java
+END
+InMemoryConsumerAssociationStoreTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/464/trunk/test/src/org/openid4java/consumer/InMemoryConsumerAssociationStoreTest.java
+END
+InMemoryNonceVerifierTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/464/trunk/test/src/org/openid4java/consumer/InMemoryNonceVerifierTest.java
+END

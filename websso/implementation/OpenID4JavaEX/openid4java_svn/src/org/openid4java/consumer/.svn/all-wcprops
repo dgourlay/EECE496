@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/631/trunk/src/org/openid4java/consumer
+END
+EhcacheNonceVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/480/trunk/src/org/openid4java/consumer/EhcacheNonceVerifier.java
+END
+JdbcNonceVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/492/trunk/src/org/openid4java/consumer/JdbcNonceVerifier.java
+END
+VerificationResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/464/trunk/src/org/openid4java/consumer/VerificationResult.java
+END
+AbstractNonceVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/521/trunk/src/org/openid4java/consumer/AbstractNonceVerifier.java
+END
+ConsumerAssociationStore.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/631/trunk/src/org/openid4java/consumer/ConsumerAssociationStore.java
+END
+InMemoryConsumerAssociationStore.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/464/trunk/src/org/openid4java/consumer/InMemoryConsumerAssociationStore.java
+END
+ConsumerManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/631/trunk/src/org/openid4java/consumer/ConsumerManager.java
+END
+JdbcConsumerAssociationStore.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/566/trunk/src/org/openid4java/consumer/JdbcConsumerAssociationStore.java
+END
+ConsumerException.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/464/trunk/src/org/openid4java/consumer/ConsumerException.java
+END
+SampleConsumer.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/464/trunk/src/org/openid4java/consumer/SampleConsumer.java
+END
+NonceVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/631/trunk/src/org/openid4java/consumer/NonceVerifier.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/464/trunk/src/org/openid4java/consumer/package.html
+END
+InMemoryNonceVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/631/trunk/src/org/openid4java/consumer/InMemoryNonceVerifier.java
+END

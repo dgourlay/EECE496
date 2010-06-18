@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/464/trunk/samples/infocardop/project/www/WEB-INF/classes
+END
+config.defaults.properties
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/!svn/ver/464/trunk/samples/infocardop/project/www/WEB-INF/classes/config.defaults.properties
+END
+log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/464/trunk/samples/infocardop/project/www/WEB-INF/classes/log4j.properties
+END
