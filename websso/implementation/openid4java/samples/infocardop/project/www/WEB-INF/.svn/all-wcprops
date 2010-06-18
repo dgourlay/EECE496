@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/464/trunk/samples/infocardop/project/www/WEB-INF
+END
+applicationContext.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/278/trunk/samples/infocardop/project/www/WEB-INF/applicationContext.xml
+END
+InfocardOPController-servlet.xml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/278/trunk/samples/infocardop/project/www/WEB-INF/InfocardOPController-servlet.xml
+END
+web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/278/trunk/samples/infocardop/project/www/WEB-INF/web.xml
+END

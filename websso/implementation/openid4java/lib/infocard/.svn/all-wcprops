@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/302/trunk/lib/infocard
+END
+higgins-configuration-api.jar
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/302/trunk/lib/infocard/higgins-configuration-api.jar
+END
+higgins-sts-common.jar
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/302/trunk/lib/infocard/higgins-sts-common.jar
+END
+higgins-sts-api.jar
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/302/trunk/lib/infocard/higgins-sts-api.jar
+END
+higgins-sts-spi.jar
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/302/trunk/lib/infocard/higgins-sts-spi.jar
+END
+higgins-sts-server-token-handler.jar
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/302/trunk/lib/infocard/higgins-sts-server-token-handler.jar
+END
+stax-api-1.0.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/302/trunk/lib/infocard/stax-api-1.0.1.jar
+END
+axiom-api-1.2.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/302/trunk/lib/infocard/axiom-api-1.2.2.jar
+END
