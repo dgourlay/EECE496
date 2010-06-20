@@ -42,19 +42,20 @@ public class AuthExtensionFactory implements MessageExtensionFactory {
             ParameterList parameterList, boolean isRequest)
             throws MessageException {
 
-        AuthMessage amsg;
+        String authMode = null;
+        if (parameterList.hasParameter("mode")) {
+            authMode = parameterList.getParameterValue("mode");
 
-         if ( parameterList.hasParameter("required") ||
-             parameterList.hasParameter("optional"))
+            if ("request".equals(authMode)) {
+                return AuthRequest.createAuthRequest(parameterList);
+            } else if ("response".equals(authMode)) {
+                //return AuthResponse.createAuthResponse(parameterList);
+            }
 
-            amsg = AuthRequest.createSRegRequest(parameterList);
 
-        else
-            amsg = AuthResponse.createSRegResponse(parameterList);
+        }
 
-       
-
-        return amsg;
-
+        throw new MessageException("Invalid value for auth mode: "
+                + authMode);
     }
 }
