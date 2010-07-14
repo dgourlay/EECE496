@@ -9,18 +9,15 @@ import org.apache.commons.logging.LogFactory;
 import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.MessageExtension;
+import org.openid4java.message.MessageExtensionFactory;
 import org.openid4java.message.ParameterList;
-import org.openid4java.message.ax.FetchRequest;
-import org.openid4java.message.ax.FetchResponse;
-import org.openid4java.message.ax.StoreRequest;
-import org.openid4java.message.ax.StoreResponse;
 import org.openid4java.message.sreg.SRegMessage;
 
 /**
  *
  * @author dgourlay
  */
-public class AuthMessage implements MessageExtension {
+public class AuthMessage implements MessageExtension, MessageExtensionFactory {
 
     private static Log _log = LogFactory.getLog(SRegMessage.class);
     private static final boolean DEBUG = _log.isDebugEnabled();

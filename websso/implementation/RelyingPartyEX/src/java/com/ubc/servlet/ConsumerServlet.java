@@ -82,38 +82,13 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
         doPost(req, resp);
     }
 
-    protected void doGet2(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        doPost2(req, resp);
-    }
 
     /**
      * {@inheritDoc}
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        if ("true".equals(req.getParameter("is_return"))) {
-            processReturn(req, resp);
-        } else {
-            String identifier = req.getParameter("openid_identifier");
-            if (identifier != null) {
-                this.authRequest(identifier, req, resp);
-            } else {
-                this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
-            }
-        }
-    }
-
-    protected void doPost2(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        String authString = req.getParameter("WWW-Authenticate");
-
-        if(authString != null){
-            if(authString.contains("OpenID:session")){
-                
-            }
-        }
+        
         if ("true".equals(req.getParameter("is_return"))) {
             processReturn(req, resp);
         } else {
