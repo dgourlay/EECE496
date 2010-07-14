@@ -41,245 +41,261 @@ import org.openid4java.util.ProxyProperties;
  */
 public class ConsumerServlet extends javax.servlet.http.HttpServlet {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -5998885243419513055L;
-	private static final String OPTIONAL_VALUE = "0";
-	private static final String REQUIRED_VALUE = "1";
-	private static final Log LOG = LogFactory.getLog(ConsumerServlet.class);
+    /**
+     *
+     */
+    private static final long serialVersionUID = -5998885243419513055L;
+    private static final String OPTIONAL_VALUE = "0";
+    private static final String REQUIRED_VALUE = "1";
+    private static final Log LOG = LogFactory.getLog(ConsumerServlet.class);
+    private ServletContext context;
+    private ConsumerManager manager;
 
-	private ServletContext context;
-	private ConsumerManager manager;
+    /**
+     * {@inheritDoc}
+     */
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
+        context = config.getServletContext();
 
-		context = config.getServletContext();
+        LOG.debug("context: " + context);
 
-		LOG.debug("context: " + context);
+        // --- Forward proxy setup (only if needed) ---
+        ProxyProperties proxyProps = getProxyProperties(config);
+        if (proxyProps != null) {
+            LOG.debug("ProxyProperties: " + proxyProps);
+            HttpClientFactory.setProxyProperties(proxyProps);
+        }
 
-		// --- Forward proxy setup (only if needed) ---
-		ProxyProperties proxyProps = getProxyProperties(config);
-		if (proxyProps != null) {
-			LOG.debug("ProxyProperties: " + proxyProps);
-			HttpClientFactory.setProxyProperties(proxyProps);
-		}
+        this.manager = new ConsumerManager();
+        manager.setAssociations(new InMemoryConsumerAssociationStore());
+        manager.setNonceVerifier(new InMemoryNonceVerifier(5000));
+        manager.setMinAssocSessEnc(AssociationSessionType.DH_SHA256);
+    }
 
-		this.manager = new ConsumerManager();
-		manager.setAssociations(new InMemoryConsumerAssociationStore());
-		manager.setNonceVerifier(new InMemoryNonceVerifier(5000));
-		manager.setMinAssocSessEnc(AssociationSessionType.DH_SHA256);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        doPost(req, resp);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		doPost(req, resp);
-	}
+    protected void doGet2(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        doPost2(req, resp);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		if ("true".equals(req.getParameter("is_return"))) {
-			processReturn(req, resp);
-		} else {
-			String identifier = req.getParameter("openid_identifier");
-			if (identifier != null) {
-				this.authRequest(identifier, req, resp);
-			} else {
-				this.getServletContext().getRequestDispatcher("/index.jsp")
-						.forward(req, resp);
-			}
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        if ("true".equals(req.getParameter("is_return"))) {
+            processReturn(req, resp);
+        } else {
+            String identifier = req.getParameter("openid_identifier");
+            if (identifier != null) {
+                this.authRequest(identifier, req, resp);
+            } else {
+                this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
+            }
+        }
+    }
 
-	private void processReturn(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		Identifier identifier = this.verifyResponse(req);
-		LOG.debug("identifier: " + identifier);
-		if (identifier == null) {
-			this.getServletContext().getRequestDispatcher("/index.jsp")
-					.forward(req, resp);
-		} else {
-			req.setAttribute("identifier", identifier.getIdentifier());
-			this.getServletContext().getRequestDispatcher("/return.jsp")
-					.forward(req, resp);
-		}
-	}
+    protected void doPost2(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
-	// --- placing the authentication request ---
-	public String authRequest(String userSuppliedString,
-			HttpServletRequest httpReq, HttpServletResponse httpResp)
-			throws IOException, ServletException {
-		try {
-			// configure the return_to URL where your application will receive
-			// the authentication responses from the OpenID provider
-			// String returnToUrl = "http://example.com/openid";
-			String returnToUrl = httpReq.getRequestURL().toString()
-					+ "?is_return=true";
+        String authString = req.getParameter("WWW-Authenticate");
 
-			// perform discovery on the user-supplied identifier
-			List discoveries = manager.discover(userSuppliedString);
+        if(authString != null){
+            if(authString.contains("OpenID:session")){
+                
+            }
+        }
+        if ("true".equals(req.getParameter("is_return"))) {
+            processReturn(req, resp);
+        } else {
+            String identifier = req.getParameter("openid_identifier");
+            if (identifier != null) {
+                this.authRequest(identifier, req, resp);
+            } else {
+                this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
+            }
+        }
+    }
 
-			// attempt to associate with the OpenID provider
-			// and retrieve one service endpoint for authentication
-			DiscoveryInformation discovered = manager.associate(discoveries);
+    private void processReturn(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        Identifier identifier = this.verifyResponse(req);
+        LOG.debug("identifier: " + identifier);
+        if (identifier == null) {
+            this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
+        } else {
+            req.setAttribute("identifier", identifier.getIdentifier());
+            this.getServletContext().getRequestDispatcher("/return.jsp").forward(req, resp);
+        }
+    }
 
-			// store the discovery information in the user's session
-			httpReq.getSession().setAttribute("openid-disc", discovered);
+    // --- placing the authentication request ---
+    public String authRequest(String userSuppliedString,
+            HttpServletRequest httpReq, HttpServletResponse httpResp)
+            throws IOException, ServletException {
+        try {
+            // configure the return_to URL where your application will receive
+            // the authentication responses from the OpenID provider
+            // String returnToUrl = "http://example.com/openid";
+            String returnToUrl = httpReq.getRequestURL().toString()
+                    + "?is_return=true";
 
-			// obtain a AuthRequest message to be sent to the OpenID provider
-			AuthRequest authReq = manager.authenticate(discovered, returnToUrl);
+            // perform discovery on the user-supplied identifier
+            List discoveries = manager.discover(userSuppliedString);
 
-			// Attribute Exchange example: fetching the 'email' attribute
-			// FetchRequest fetch = FetchRequest.createFetchRequest();
-			SRegRequest sregReq = SRegRequest.createFetchRequest();
+            // attempt to associate with the OpenID provider
+            // and retrieve one service endpoint for authentication
+            DiscoveryInformation discovered = manager.associate(discoveries);
 
-			String[] attributes = { "nickname", "email", "fullname", "dob",
-					"gender", "postcode", "country", "language", "timezone" };
-			for (int i = 0, l = attributes.length; i < l; i++) {
-				String attribute = attributes[i];
-				String value = httpReq.getParameter(attribute);
-				if (OPTIONAL_VALUE.equals(value)) {
-					sregReq.addAttribute(attribute, false);
-				} else if (REQUIRED_VALUE.equals(value)) {
-					sregReq.addAttribute(attribute, true);
-				}
-			}
+            // store the discovery information in the user's session
+            httpReq.getSession().setAttribute("openid-disc", discovered);
 
-			// attach the extension to the authentication request
-			if (!sregReq.getAttributes().isEmpty()) {
-				authReq.addExtension(sregReq);
-			}
+            // obtain a AuthRequest message to be sent to the OpenID provider
+            AuthRequest authReq = manager.authenticate(discovered, returnToUrl);
 
-			if (!discovered.isVersion2()) {
-				// Option 1: GET HTTP-redirect to the OpenID Provider endpoint
-				// The only method supported in OpenID 1.x
-				// redirect-URL usually limited ~2048 bytes
-				httpResp.sendRedirect(authReq.getDestinationUrl(true));
-				return null;
-			} else {
-				// Option 2: HTML FORM Redirection (Allows payloads >2048 bytes)
+            // Attribute Exchange example: fetching the 'email' attribute
+            // FetchRequest fetch = FetchRequest.createFetchRequest();
+            SRegRequest sregReq = SRegRequest.createFetchRequest();
 
-				RequestDispatcher dispatcher = getServletContext()
-						.getRequestDispatcher("/formredirection.jsp");
-				httpReq.setAttribute("prameterMap", httpReq.getParameterMap());
-				httpReq.setAttribute("message", authReq);
-				// httpReq.setAttribute("destinationUrl", httpResp
-				// .getDestinationUrl(false));
-				dispatcher.forward(httpReq, httpResp);
-			}
-		} catch (OpenIDException e) {
-			// present error to the user
-			throw new ServletException(e);
-		}
+            String[] attributes = {"nickname", "email", "fullname", "dob",
+                "gender", "postcode", "country", "language", "timezone"};
+            for (int i = 0, l = attributes.length; i < l; i++) {
+                String attribute = attributes[i];
+                String value = httpReq.getParameter(attribute);
+                if (OPTIONAL_VALUE.equals(value)) {
+                    sregReq.addAttribute(attribute, false);
+                } else if (REQUIRED_VALUE.equals(value)) {
+                    sregReq.addAttribute(attribute, true);
+                }
+            }
 
-		return null;
-	}
+            // attach the extension to the authentication request
+            if (!sregReq.getAttributes().isEmpty()) {
+                authReq.addExtension(sregReq);
+            }
 
-	// --- processing the authentication response ---
-	public Identifier verifyResponse(HttpServletRequest httpReq)
-			throws ServletException {
-		try {
-			// extract the parameters from the authentication response
-			// (which comes in as a HTTP request from the OpenID provider)
-			ParameterList response = new ParameterList(httpReq
-					.getParameterMap());
+            if (!discovered.isVersion2()) {
+                // Option 1: GET HTTP-redirect to the OpenID Provider endpoint
+                // The only method supported in OpenID 1.x
+                // redirect-URL usually limited ~2048 bytes
+                httpResp.sendRedirect(authReq.getDestinationUrl(true));
+                return null;
+            } else {
+                // Option 2: HTML FORM Redirection (Allows payloads >2048 bytes)
 
-			// retrieve the previously stored discovery information
-			DiscoveryInformation discovered = (DiscoveryInformation) httpReq
-					.getSession().getAttribute("openid-disc");
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/formredirection.jsp");
+                httpReq.setAttribute("prameterMap", httpReq.getParameterMap());
+                httpReq.setAttribute("message", authReq);
+                // httpReq.setAttribute("destinationUrl", httpResp
+                // .getDestinationUrl(false));
+                dispatcher.forward(httpReq, httpResp);
+            }
+        } catch (OpenIDException e) {
+            // present error to the user
+            throw new ServletException(e);
+        }
 
-			// extract the receiving URL from the HTTP request
-			StringBuffer receivingURL = httpReq.getRequestURL();
-			String queryString = httpReq.getQueryString();
-			if (queryString != null && queryString.length() > 0)
-				receivingURL.append("?").append(httpReq.getQueryString());
+        return null;
+    }
 
-			// verify the response; ConsumerManager needs to be the same
-			// (static) instance used to place the authentication request
-			VerificationResult verification = manager.verify(receivingURL
-					.toString(), response, discovered);
+    // --- processing the authentication response ---
+    public Identifier verifyResponse(HttpServletRequest httpReq)
+            throws ServletException {
+        try {
+            // extract the parameters from the authentication response
+            // (which comes in as a HTTP request from the OpenID provider)
+            ParameterList response = new ParameterList(httpReq.getParameterMap());
 
-			// examine the verification result and extract the verified
-			// identifier
-			Identifier verified = verification.getVerifiedId();
-			if (verified != null) {
-				AuthSuccess authSuccess = (AuthSuccess) verification
-						.getAuthResponse();
+            // retrieve the previously stored discovery information
+            DiscoveryInformation discovered = (DiscoveryInformation) httpReq.getSession().getAttribute("openid-disc");
 
-				if (authSuccess.hasExtension(SRegMessage.OPENID_NS_SREG)) {
-					MessageExtension ext = authSuccess
-							.getExtension(SRegMessage.OPENID_NS_SREG);
-					if (ext instanceof SRegResponse) {
-						SRegResponse sregResp = (SRegResponse) ext;
-						for (Iterator iter = sregResp.getAttributeNames()
-								.iterator(); iter.hasNext();) {
-							String name = (String) iter.next();
-							String value = sregResp.getParameterValue(name);
-							httpReq.setAttribute(name, value);
-						}
-					}
-				}
-				if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
-					FetchResponse fetchResp = (FetchResponse) authSuccess
-							.getExtension(AxMessage.OPENID_NS_AX);
+            // extract the receiving URL from the HTTP request
+            StringBuffer receivingURL = httpReq.getRequestURL();
+            String queryString = httpReq.getQueryString();
+            if (queryString != null && queryString.length() > 0) {
+                receivingURL.append("?").append(httpReq.getQueryString());
+            }
 
-					// List emails = fetchResp.getAttributeValues("email");
-					// String email = (String) emails.get(0);
+            // verify the response; ConsumerManager needs to be the same
+            // (static) instance used to place the authentication request
+            VerificationResult verification = manager.verify(receivingURL.toString(), response, discovered);
 
-					List aliases = fetchResp.getAttributeAliases();
-					for (Iterator iter = aliases.iterator(); iter.hasNext();) {
-						String alias = (String) iter.next();
-						List values = fetchResp.getAttributeValues(alias);
-						if (values.size() > 0) {
-							LOG.debug(alias + " : " + values.get(0));
-							httpReq.setAttribute(alias, values.get(0));
-						}
-					}
-				}
+            // examine the verification result and extract the verified
+            // identifier
+            Identifier verified = verification.getVerifiedId();
+            if (verified != null) {
+                AuthSuccess authSuccess = (AuthSuccess) verification.getAuthResponse();
 
-				return verified; // success
-			}
-		} catch (OpenIDException e) {
-			// present error to the user
-			throw new ServletException(e);
-		}
+                if (authSuccess.hasExtension(SRegMessage.OPENID_NS_SREG)) {
+                    MessageExtension ext = authSuccess.getExtension(SRegMessage.OPENID_NS_SREG);
+                    if (ext instanceof SRegResponse) {
+                        SRegResponse sregResp = (SRegResponse) ext;
+                        for (Iterator iter = sregResp.getAttributeNames().iterator(); iter.hasNext();) {
+                            String name = (String) iter.next();
+                            String value = sregResp.getParameterValue(name);
+                            httpReq.setAttribute(name, value);
+                        }
+                    }
+                }
+                if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
+                    FetchResponse fetchResp = (FetchResponse) authSuccess.getExtension(AxMessage.OPENID_NS_AX);
 
-		return null;
-	}
+                    // List emails = fetchResp.getAttributeValues("email");
+                    // String email = (String) emails.get(0);
 
-	/**
-	 * Get proxy properties from the context init params.
-	 *
-	 * @return proxy properties
-	 */
-	private static ProxyProperties getProxyProperties(ServletConfig config) {
-		ProxyProperties proxyProps;
-		String host = config.getInitParameter("proxy.host");
-		LOG.debug("proxy.host: " + host);
-		if (host == null) {
-			proxyProps = null;
-		} else {
-			proxyProps = new ProxyProperties();
-			String port = config.getInitParameter("proxy.port");
-			String username = config.getInitParameter("proxy.username");
-			String password = config.getInitParameter("proxy.password");
-			String domain = config.getInitParameter("proxy.domain");
-			proxyProps.setProxyHostName(host);
-			proxyProps.setProxyPort(Integer.parseInt(port));
-			proxyProps.setUserName(username);
-			proxyProps.setPassword(password);
-			proxyProps.setDomain(domain);
-		}
-		return proxyProps;
-	}
+                    List aliases = fetchResp.getAttributeAliases();
+                    for (Iterator iter = aliases.iterator(); iter.hasNext();) {
+                        String alias = (String) iter.next();
+                        List values = fetchResp.getAttributeValues(alias);
+                        if (values.size() > 0) {
+                            LOG.debug(alias + " : " + values.get(0));
+                            httpReq.setAttribute(alias, values.get(0));
+                        }
+                    }
+                }
+
+                return verified; // success
+            }
+        } catch (OpenIDException e) {
+            // present error to the user
+            throw new ServletException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get proxy properties from the context init params.
+     *
+     * @return proxy properties
+     */
+    private static ProxyProperties getProxyProperties(ServletConfig config) {
+        ProxyProperties proxyProps;
+        String host = config.getInitParameter("proxy.host");
+        LOG.debug("proxy.host: " + host);
+        if (host == null) {
+            proxyProps = null;
+        } else {
+            proxyProps = new ProxyProperties();
+            String port = config.getInitParameter("proxy.port");
+            String username = config.getInitParameter("proxy.username");
+            String password = config.getInitParameter("proxy.password");
+            String domain = config.getInitParameter("proxy.domain");
+            proxyProps.setProxyHostName(host);
+            proxyProps.setProxyPort(Integer.parseInt(port));
+            proxyProps.setUserName(username);
+            proxyProps.setPassword(password);
+            proxyProps.setDomain(domain);
+        }
+        return proxyProps;
+    }
 }

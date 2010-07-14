@@ -7,8 +7,13 @@ package org.openid4java.message.auth;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openid4java.message.Message;
+import org.openid4java.message.MessageException;
 import org.openid4java.message.MessageExtension;
 import org.openid4java.message.ParameterList;
+import org.openid4java.message.ax.FetchRequest;
+import org.openid4java.message.ax.FetchResponse;
+import org.openid4java.message.ax.StoreRequest;
+import org.openid4java.message.ax.StoreResponse;
 import org.openid4java.message.sreg.SRegMessage;
 
 /**
@@ -111,5 +116,26 @@ public class AuthMessage implements MessageExtension {
      */
     public boolean signRequired() {
         return true;
+    }
+
+     public MessageExtension getExtension(
+            ParameterList parameterList, boolean isRequest)
+            throws MessageException
+    {
+        String authMode = null;
+        
+        if (parameterList.hasParameter("mode"))
+        {
+            authMode = parameterList.getParameterValue("mode");
+
+            if ("request".equals(authMode))
+                return AuthRequest.createAuthRequest(parameterList);
+
+            else if ("response".equals(authMode))
+                return AuthResponse.createAuthResponse(parameterList);
+        }
+
+        throw new MessageException("Invalid value for OpenIDAuth mode: "
+                                   + authMode);
     }
 }

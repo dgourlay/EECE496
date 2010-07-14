@@ -18,7 +18,7 @@ import org.openid4java.message.sreg.SRegRequest;
  */
 public class AuthRequest extends AuthMessage {
 
-    private static Log _log = LogFactory.getLog(SRegRequest.class);
+    private static Log _log = LogFactory.getLog(AuthRequest.class);
     private static final boolean DEBUG = _log.isDebugEnabled();
 
     /**
@@ -64,7 +64,7 @@ public class AuthRequest extends AuthMessage {
         }
 
         if (DEBUG) {
-            _log.debug("Created SReg request from parameter list:\n" + params);
+            _log.debug("Created Auth request from parameter list:\n" + params);
         }
 
         return req;
