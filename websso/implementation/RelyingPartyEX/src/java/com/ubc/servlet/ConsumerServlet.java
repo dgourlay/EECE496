@@ -4,6 +4,7 @@
 package com.ubc.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,6 +52,10 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
     private ServletContext context;
     private ConsumerManager manager;
 
+
+    private static final String REALM = "joojoo.dyndns.org";
+    private static final String AUTH_DOMAIN = "joojoo.dyndns.org";
+
     /**
      * {@inheritDoc}
      */
@@ -88,7 +93,25 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
+
+        String authString = req.getParameter("WWW-Authenticate");
+
+        if (authString == null) {
+            //send back response with authentication realm
+            PrintWriter out = resp.getWriter();
+
+            String respString = "OpenID:session realm=\"" + REALM
+                    + "\" auth-domain=\"" + AUTH_DOMAIN
+                    + "\"";
+            resp.addHeader("WWW-Authenticate", respString);
+            out.println("Step 1");
+        }else{
+
+            if (authString.contains("OpenID:session")) {
+            }
+        }
+        /*
         if ("true".equals(req.getParameter("is_return"))) {
             processReturn(req, resp);
         } else {
@@ -99,6 +122,8 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
                 this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
             }
         }
+         *
+         */
     }
 
     private void processReturn(HttpServletRequest req, HttpServletResponse resp)
