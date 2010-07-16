@@ -85,6 +85,7 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         doPost(req, resp);
+
     }
 
 
@@ -106,6 +107,8 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
                     + "\"";
             resp.addHeader("WWW-Authenticate", respString);
             out.println("Step 1");
+
+
         }else{
 
             if (authString.contains("OpenID:session")) {

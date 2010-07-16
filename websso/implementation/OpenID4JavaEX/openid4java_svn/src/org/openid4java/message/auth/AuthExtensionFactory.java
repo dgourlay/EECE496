@@ -19,7 +19,7 @@ public class AuthExtensionFactory implements MessageExtensionFactory {
      * Gets the Type URI that identifies the Auth 1.0 extension.
      */
     public String getTypeUri() {
-        return AuthMessage.OPENID_NS_AUTH;
+        return OpenIDAuthMessage.OPENID_NS_AUTH;
     }
 
     /**
@@ -47,7 +47,7 @@ public class AuthExtensionFactory implements MessageExtensionFactory {
             authMode = parameterList.getParameterValue("mode");
 
             if ("request".equals(authMode)) {
-                return AuthRequest.createAuthRequest(parameterList);
+                return OpenIDAuthRequest.createAuthRequest(parameterList);
             } else if ("response".equals(authMode)) {
                 //return AuthResponse.createAuthResponse(parameterList);
             }
