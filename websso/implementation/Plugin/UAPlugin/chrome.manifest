@@ -1,0 +1,2 @@
+content uaplugin chrome/content/
+overlay chrome://browser/content/browser.xul chrome://uaplugin/content/uaplugin.xul

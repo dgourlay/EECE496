@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<overlay id="uaplugin_preferences_overlay"
+                   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+<prefwindow id="BrowserPreferences">
+ 
+<prefpane id="uaplugin-prefspane" label="UAPlugin Settings"
+	image="chrome://uaplugin/content/images/logo.png">
+  <preferences>
+    <preference id="pref_defaultID" name="extensions.uaplugin.defaultID" type="string"/>
+  </preferences>
+ 
+  <hbox align="center">
+    <textbox preference="pref_defaultID" id="defaultID"/>
+  </hbox>
+</prefpane>
+ 
+</prefwindow>
+</overlay>

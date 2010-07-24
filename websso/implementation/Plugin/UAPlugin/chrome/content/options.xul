@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+ 
+<prefwindow id="uaplugin-prefs"
+     title="UAPlugin Options"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+<prefpane id="uaplugin-prefspane" label="UAPlugin Settings" >
+  <preferences>
+    <preference id="pref_activeID" name="extensions.uaplugin.activeID" type="string"/>
+    <preference id="pref_activePass" name="extensions.uaplugin.activePass" type="string"/>
+    <preference id="pref_activeSessionID" name="extensions.uaplugin.activeSessionID" type="string"/>
+  </preferences>
+ 
+  <hbox align="center">
+    <label control="activeID" value="Active ID: "/>
+	<textbox preference="pref_activeID" id="activeID"/>
+    <label control="activePass" value="Active Pass: "/>
+	<textbox preference="pref_activePass" id="activePass"/>
+  </hbox>
+  <vbox>
+    <label control="activeSessionID" value="Active Session ID: "/>
+	<textbox preference="pref_activeSessionID" id="activeSessionID"/>
+  </vbox>
+</prefpane>
+ 
+</prefwindow>

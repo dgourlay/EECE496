@@ -11,8 +11,7 @@
             ServerManager newmgr=new ServerManager();
             newmgr.setSharedAssociations(new InMemoryServerAssociationStore());
             newmgr.setPrivateAssociations(new InMemoryServerAssociationStore());
-            newmgr.setOPEndpointUrl(request.getScheme() + "://joojoo.dyndns.org:8080/IdentityProvider/provider.jsp");
-            //newmgr.setOPEndpointUrl(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/IdentityProvider/provider.jsp");
+            newmgr.setOPEndpointUrl(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/IdentityProvider/provider.jsp");
             pageContext.setAttribute("servermanager", newmgr, PageContext.APPLICATION_SCOPE);
 
             // The attribute com.mycompany.name1 may not have a value or may have the value null

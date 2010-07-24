@@ -4,8 +4,9 @@
  */
 package com.ubc.servlet;
 
+import com.ubc.util.XrdsDocumentBuilder;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +40,11 @@ public class SampleServlet extends HttpServlet {
     public ServerManager manager = new ServerManager();
 
     public SampleServlet() {
-        this("http://joojoo.dyndns.org:8080/SampleServlet");
+        this("http://localhost:8080/SampleServer/SampleServlet");
     }
 
     public SampleServlet(String endPointUrl) {
+
         manager.setOPEndpointUrl(endPointUrl);
         // for a working demo, not enforcing RP realm discovery
         // since this new feature is not deployed
@@ -52,6 +54,20 @@ public class SampleServlet extends HttpServlet {
     public String processRequest(HttpServletRequest httpReq,
             HttpServletResponse httpResp)
             throws Exception {
+
+
+        //Check for discovery
+        if (httpReq.getParameterMap().isEmpty()) {
+            httpResp.setContentType("application/xrds+xml");
+            OutputStream outputStream = httpResp.getOutputStream();
+            String xrdsResponse = createXrdsResponse();
+            //
+            outputStream.write(xrdsResponse.getBytes());
+            outputStream.close();
+            return "";
+        }
+
+
         // extract the parameters from the request
         ParameterList request = new ParameterList(httpReq.getParameterMap());
 
@@ -181,6 +197,17 @@ public class SampleServlet extends HttpServlet {
         return null;
     }
 
+    public String createXrdsResponse() {
+        
+        XrdsDocumentBuilder documentBuilder = new XrdsDocumentBuilder();
+        documentBuilder.addServiceElement("http://specs.openid.net/auth/2.0/server", manager.getOPEndpointUrl(), "10");
+        documentBuilder.addServiceElement("http://specs.openid.net/auth/2.0/signon", manager.getOPEndpointUrl(), "20");
+        documentBuilder.addServiceElement(AxMessage.OPENID_NS_AX, manager.getOPEndpointUrl(), "30");
+        documentBuilder.addServiceElement(SRegMessage.OPENID_NS_SREG, manager.getOPEndpointUrl(), "40");
+
+        return documentBuilder.toXmlString();
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -195,6 +222,7 @@ public class SampleServlet extends HttpServlet {
 
         try {
             processRequest(request, response);
+            System.out.println("Ran doGet");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -210,9 +238,10 @@ public class SampleServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             processRequest(request, response);
+            System.out.println("Ran doPost");
         } catch (Exception e) {
             e.printStackTrace();
         }

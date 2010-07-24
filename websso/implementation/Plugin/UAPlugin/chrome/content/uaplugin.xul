@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<overlay id="UAPlugin-Overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript"
+            src="chrome://uaplugin/content/uaplugin.js" />         
+	
+	<toolbox id="navigator-toolbox">
+    
+        <toolbar id="UAPlugin-Toolbar" toolbarname="UAPlugin Toolbar" accesskey="T"
+                 class="chromeclass-toolbar" context="toolbar-context-menu" 
+                 hidden="false" persist="hidden">
+
+        	<toolbaritem id="UAPlugin-ActiveUser-TBItem" persist="width">
+    			<menulist id="UAPlugin-ActiveUser" editable="false" flex="1"
+             	   		minwidth="100" width="250">
+        			<menupopup id="UAPlugin-ActiveUserMenu" onpopupshowing="objUAPlugin.Populate()" />
+    			</menulist>
+			</toolbaritem> 
+
+			<splitter id="UAPlugin-ResizeSplitter" state="open" collapse="none"
+                      resizebefore="closest" resizeafter="farthest"
+                      tooltiptext="Resize the Search Box">
+                <vbox id="UAPlugin-ResizeBar" />
+            </splitter>
+
+			<toolbaritem flex="0">
+	            <toolbarbutton id="UAPlugin-Add-Button" tooltiptext="Add a new account"
+    	           label="Add" oncommand="objUAPlugin.AddUser(); objUAPlugin.Populate();" />
+	            <toolbarbutton id="UAPlugin-Edit-Button" tooltiptext="Edit account"
+    	           label="Edit" oncommand="objUAPlugin.EditUser()" />
+            </toolbaritem>
+
+			<toolbarspring />
+        		
+		</toolbar>
+
+    </toolbox>
+
+	<statusbar id="status-bar">
+  		<statusbarpanel id="UAPlugin-StatusPanel" label="UAPlugin Ready" />
+ 	</statusbar>
+
+	<script type="application/x-javascript"
+		src="chrome://uaplugin/content/ua_listener.js" />         
+
+</overlay>

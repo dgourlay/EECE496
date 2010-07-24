@@ -1,4 +1,4 @@
-<%@ page contentType="application/xrds+xml"%><?xml version="1.0" encoding="UTF-8"?>
+<%@ page contentType="application/xrds+xml"%><?xml version="2.0" encoding="UTF-8"?>
 <xrds:XRDS
   xmlns:xrds="xri://$xrds"
   xmlns:openid="http://openid.net/xmlns/1.0"

@@ -1,19 +1,29 @@
-<%-- 
-    Document   : index
-    Created on : 14-Jun-2010, 12:31:20 PM
-    Author     : dgourlay
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
-
+<%@ page session="true" %>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<body>
+<%
+    if (request.getParameter("logout")!=null)
+    {
+        session.removeAttribute("openid");
+        session.removeAttribute("openid-claimed");
+%>
+    Logged out!<p>
+<%
+    }
+	if (session.getAttribute("openid")==null) {
+%>
+<form method="POST" action="consumer_redirect.jsp">
+<strong>OpenID:</strong>
+<input type="text" name="openid" size="60"/><br>
+<input type="submit"/>
+</form>
+<%
+} else {
+
+%>
+Logged in as <%= session.getAttribute("openid") %><p>
+<a href="?logout=true">Log out</a>
+
+<% } %>
+</body>
 </html>
