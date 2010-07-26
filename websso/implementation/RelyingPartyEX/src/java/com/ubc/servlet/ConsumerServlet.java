@@ -35,6 +35,7 @@ import org.openid4java.message.sreg.SRegRequest;
 import org.openid4java.message.sreg.SRegResponse;
 import org.openid4java.util.HttpClientFactory;
 import org.openid4java.util.ProxyProperties;
+import org.openid4java.message.ParameterList;
 
 /**
  * @author Sutra Zhou

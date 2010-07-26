@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.ubc.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Prot_Servlet extends HttpServlet {
 
-   static String REALM = "*.ece.ubc.com";
-   static String AUTHDOMAIN = "www.ece.ubc.com";
-
+    static String REALM = "*.ece.ubc.com";
+    static String AUTHDOMAIN = "www.ece.ubc.com";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -30,20 +29,22 @@ public class Prot_Servlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
         //check if authorization is being provided
-        if(request.getHeader("Authorization") == null){
+        if (request.getHeader("Authorization") == null) {
             response.addHeader("WWW-Authenticate",
-                    "OpenID:session " +
-                    "\""+REALM +"\", " + "\""+AUTHDOMAIN+"\"");
-            response.sendError( 401 );
+                    "OpenID:session "
+                    + "\"" + REALM + "\", " + "\"" + AUTHDOMAIN + "\"");
+            response.sendError(401);
 
-        }else{
-
-
+        } else {
+            //forward request to ConsumerServlet if this is an OpenID Authentication
+            if (request.getHeader("Authorization").contains("OpenID:session")) {
+                request.getRequestDispatcher("/ConsumerServlet").forward(request, response);
+            }
         }
         try {
             /* TODO output your page here
@@ -55,11 +56,11 @@ public class Prot_Servlet extends HttpServlet {
             out.println("<h1>Servlet Prot_Servlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
-            */
-        } finally { 
+             */
+        } finally {
             out.close();
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -71,9 +72,9 @@ public class Prot_Servlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
-    } 
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -84,7 +85,7 @@ public class Prot_Servlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -96,5 +97,4 @@ public class Prot_Servlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }
