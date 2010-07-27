@@ -42,20 +42,12 @@ public class OpenIDAuthExtensionFactory implements MessageExtensionFactory {
             ParameterList parameterList, boolean isRequest)
             throws MessageException {
 
-        String authMode = null;
-        if (parameterList.hasParameter("mode")) {
-            authMode = parameterList.getParameterValue("mode");
+        OpenIDAuthRequest aReq;
 
-            if ("request".equals(authMode)) {
-                return OpenIDAuthRequest.createAuthRequest(parameterList);
-            } else if ("response".equals(authMode)) {
-                //return AuthResponse.createAuthResponse(parameterList);
-            }
+        aReq = OpenIDAuthRequest.createAuthRequest(parameterList);
+
+        return aReq;
 
 
-        }
-
-        throw new MessageException("Invalid value for auth mode: "
-                + authMode);
     }
 }

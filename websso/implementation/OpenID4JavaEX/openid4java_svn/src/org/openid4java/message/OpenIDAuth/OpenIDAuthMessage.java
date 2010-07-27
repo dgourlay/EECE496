@@ -25,8 +25,6 @@ public class OpenIDAuthMessage implements MessageExtension, MessageExtensionFact
     /* Auth Message Namespace  */
     public static final String OPENID_NS_AUTH = "http://lersse.ece.ubc.ca/openid/ext/ua/auth/1.0";
     private String _typeUri = OPENID_NS_AUTH;
-
-    
     protected ParameterList _parameters;
 
     public OpenIDAuthMessage() {
@@ -45,6 +43,7 @@ public class OpenIDAuthMessage implements MessageExtension, MessageExtensionFact
         }
     }
 
+    //REQ
     /**
      * Gets the TypeURI that identifies a extension to the OpenID protocol.
      */
@@ -52,6 +51,7 @@ public class OpenIDAuthMessage implements MessageExtension, MessageExtensionFact
         return _typeUri;
     }
 
+    //REQ
     /**
      * Gets the extension-specific parameters.
      * <p>
@@ -76,6 +76,7 @@ public class OpenIDAuthMessage implements MessageExtension, MessageExtensionFact
         return _parameters.getParameterValue(name);
     }
 
+    //REQ
     /**
      * Sets the extension-specific parameters.
      * <p>
@@ -90,6 +91,7 @@ public class OpenIDAuthMessage implements MessageExtension, MessageExtensionFact
         _parameters = params;
     }
 
+    //REQ
     /**
      * Used by the core OpenID authentication implementation to learn whether
      * an extension provies authentication services.
@@ -104,6 +106,7 @@ public class OpenIDAuthMessage implements MessageExtension, MessageExtensionFact
         return true;
     }
 
+    //REQ
     /**
      * Flag for indicating that an extension must be signed.
      *
@@ -112,27 +115,18 @@ public class OpenIDAuthMessage implements MessageExtension, MessageExtensionFact
      *          requirement.
      */
     public boolean signRequired() {
-        return true;
+        return false;
     }
 
-     public MessageExtension getExtension(
+    //REQ
+    public MessageExtension getExtension(
             ParameterList parameterList, boolean isRequest)
-            throws MessageException
-    {
-        String authMode = null;
-        
-        if (parameterList.hasParameter("mode"))
-        {
-            authMode = parameterList.getParameterValue("mode");
+            throws MessageException {
 
-            if ("request".equals(authMode))
-                return OpenIDAuthRequest.createAuthRequest(parameterList);
-
-            else if ("response".equals(authMode))
-                return OpenIDAuthResponse.createAuthResponse(parameterList);
+        if(isRequest){
+            return OpenIDAuthRequest.createAuthRequest(_parameters);
         }
 
-        throw new MessageException("Invalid value for OpenIDAuth mode: "
-                                   + authMode);
+        throw new MessageException("Invalid value for isRequest for OpenIDAuth-Extension");
     }
 }

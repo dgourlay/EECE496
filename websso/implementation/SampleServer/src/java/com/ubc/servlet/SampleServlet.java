@@ -7,6 +7,7 @@ package com.ubc.servlet;
 import com.ubc.util.XrdsDocumentBuilder;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,8 @@ import org.openid4java.message.AuthSuccess;
 import org.openid4java.message.DirectError;
 import org.openid4java.message.Message;
 import org.openid4java.message.MessageExtension;
+import org.openid4java.message.OpenIDAuth.OpenIDAuthMessage;
+import org.openid4java.message.OpenIDAuth.OpenIDAuthRequest;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
@@ -86,13 +89,38 @@ public class SampleServlet extends HttpServlet {
             // interact with the user and obtain data needed to continue
             List userData = userInteraction(request);
 
+            //TESTING
+            AuthRequest authReq =
+                    AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
+
+
+            if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH)) {
+
+                MessageExtension ext = authReq.getExtension(OpenIDAuthMessage.OPENID_NS_AUTH);
+                if (ext instanceof OpenIDAuthRequest) {
+
+                    OpenIDAuthRequest aReq = (OpenIDAuthRequest) ext;
+                    System.out.println("Success");
+
+
+                }
+            }
+
+
+
+
+
+
+
+
+            //TESTING
             String userSelectedClaimedId = (String) userData.get(0);
             Boolean authenticatedAndApproved = (Boolean) userData.get(1);
             String email = (String) userData.get(2);
 
             // --- process an authentication request ---
-            AuthRequest authReq =
-                    AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
+            //AuthRequest authReq =
+            //      AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
 
             String opLocalId = null;
             // if the user chose a different claimed_id than the one in request
@@ -110,6 +138,17 @@ public class SampleServlet extends HttpServlet {
             if (response instanceof DirectError) {
                 return directResponse(httpResp, response.keyValueFormEncoding());
             } else {
+                if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH)) {
+
+                    MessageExtension ext = authReq.getExtension(OpenIDAuthMessage.OPENID_NS_AUTH);
+                    if (ext instanceof OpenIDAuthRequest) {
+
+                        OpenIDAuthRequest aReq = (OpenIDAuthRequest) ext;
+                        System.out.println("Success");
+
+
+                    }
+                }
                 if (authReq.hasExtension(AxMessage.OPENID_NS_AX)) {
                     MessageExtension ext = authReq.getExtension(AxMessage.OPENID_NS_AX);
                     if (ext instanceof FetchRequest) {
@@ -185,7 +224,11 @@ public class SampleServlet extends HttpServlet {
     }
 
     protected List userInteraction(ParameterList request) throws ServerException {
-        throw new ServerException("User-interaction not implemented.");
+
+        //TODO:  IMPLEMENT
+        ArrayList<String> values = new ArrayList<String>();
+
+        return values;
     }
 
     private String directResponse(HttpServletResponse httpResp, String response)
@@ -198,7 +241,7 @@ public class SampleServlet extends HttpServlet {
     }
 
     public String createXrdsResponse() {
-        
+
         XrdsDocumentBuilder documentBuilder = new XrdsDocumentBuilder();
         documentBuilder.addServiceElement("http://specs.openid.net/auth/2.0/server", manager.getOPEndpointUrl(), "10");
         documentBuilder.addServiceElement("http://specs.openid.net/auth/2.0/signon", manager.getOPEndpointUrl(), "20");

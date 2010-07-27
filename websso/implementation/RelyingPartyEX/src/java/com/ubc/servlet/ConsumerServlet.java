@@ -27,7 +27,6 @@ import org.openid4java.discovery.Identifier;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.AuthSuccess;
 import org.openid4java.message.MessageExtension;
-import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchResponse;
 import org.openid4java.message.sreg.SRegMessage;
@@ -35,6 +34,7 @@ import org.openid4java.message.sreg.SRegRequest;
 import org.openid4java.message.sreg.SRegResponse;
 import org.openid4java.util.HttpClientFactory;
 import org.openid4java.util.ProxyProperties;
+import org.openid4java.message.OpenIDAuth.*;
 import org.openid4java.message.ParameterList;
 
 /**
@@ -80,9 +80,16 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
      */
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        doPost(req, resp);
-    }
 
+        String authHeader = req.getHeader("Authorization");
+
+        //check for start of OepnIDAuth authentication
+        if (authHeader != null) {
+            processExtension(req, resp);
+        } else {
+            doPost(req, resp);
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -101,6 +108,74 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
                 this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
             }
         }
+    }
+
+    private void processExtension(HttpServletRequest httpReq, HttpServletResponse httpResp)
+            throws ServletException, IOException {
+
+        String authString = httpReq.getHeader("Authorization");
+
+        OpenIDAuthRequest extension = null;
+
+        if (authString.contains("OpenID:session")) {
+
+            extension = OpenIDAuthRequest.createAuthRequest(authString);
+
+        } else if (authString.contains("OpenID:challenge")) {
+
+            //CHANGE THIS
+            extension = OpenIDAuthRequest.createAuthRequest(authString);
+        } else {
+            return;
+        }
+
+        String userID = extension.getParameterValue("user-id");
+        try {
+            // perform discovery on the user-id
+            List discoveries = manager.discover(userID);
+
+            // attempt to associate with the OpenID provider
+            // and retrieve one service endpoint for authentication
+            DiscoveryInformation discovered = manager.associate(discoveries);
+            
+             // store the discovery information in the user's session
+            httpReq.getSession().setAttribute("openid-disc", discovered);
+
+
+            //prepare for checkid_immediate
+            manager.setImmediateAuth(true);
+            // obtain a AuthRequest message to be sent to the OpenID provider
+            AuthRequest authReq = manager.authenticate(discovered, httpReq.getRequestURL().toString());
+            
+            //attach auth extension
+            authReq.addExtension(extension);
+            authReq.setImmediate(true);
+
+            //if (!discovered.isVersion2()) {
+            if(true){  //TEMP KLUDGE
+            // Option 1: GET HTTP-redirect to the OpenID Provider endpoint
+                // The only method supported in OpenID 1.x
+                // redirect-URL usually limited ~2048 bytes
+                httpResp.sendRedirect(authReq.getDestinationUrl(true));
+                return;
+
+            } else {
+                // Option 2: HTML FORM Redirection (Allows payloads >2048 bytes)
+
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/formredirection.jsp");
+                httpReq.setAttribute("prameterMap", httpReq.getParameterMap());
+                httpReq.setAttribute("message", authReq);
+                // httpReq.setAttribute("destinationUrl", httpResp
+                // .getDestinationUrl(false));
+                dispatcher.forward(httpReq, httpResp);
+            }
+
+        } catch (Exception e) {
+            throw new ServletException();
+        }
+
+
+
     }
 
     private void processReturn(HttpServletRequest req, HttpServletResponse resp)
@@ -137,10 +212,8 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
             httpReq.getSession().setAttribute("openid-disc", discovered);
 
             // obtain a AuthRequest message to be sent to the OpenID provider
-            
-            AuthRequest authReq = manager.authenticate(discovered, returnToUrl);
 
-            //authReq.setImmediate(true);
+            AuthRequest authReq = manager.authenticate(discovered, returnToUrl);
 
             // Attribute Exchange example: fetching the 'email' attribute
             // FetchRequest fetch = FetchRequest.createFetchRequest();

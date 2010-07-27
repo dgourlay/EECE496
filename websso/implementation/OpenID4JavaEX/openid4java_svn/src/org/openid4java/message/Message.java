@@ -15,6 +15,8 @@ import java.net.URLEncoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openid4java.message.OpenIDAuth.OpenIDAuthExtensionFactory;
+import org.openid4java.message.OpenIDAuth.OpenIDAuthMessage;
 
 /**
  * @author Marius Scurtescu, Johnny Bufu
@@ -52,6 +54,7 @@ public class Message
         _extensionFactories.put(SRegMessage.OPENID_NS_SREG, SRegMessage.class);
         _extensionFactories.put(SRegMessage.OPENID_NS_SREG11, SReg11ExtensionFactory.class);
         _extensionFactories.put(PapeMessage.OPENID_NS_PAPE, PapeMessage.class);
+        _extensionFactories.put(OpenIDAuthMessage.OPENID_NS_AUTH, OpenIDAuthExtensionFactory.class);
     }
 
     protected Message()

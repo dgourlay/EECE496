@@ -4,13 +4,14 @@
  */
 package org.openid4java.message.OpenIDAuth;
 
-import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.Parameter;
 import org.openid4java.message.ParameterList;
-import org.openid4java.message.sreg.SRegRequest;
 
 /**
  *
@@ -60,15 +61,68 @@ public class OpenIDAuthRequest extends OpenIDAuthMessage {
         OpenIDAuthRequest req = new OpenIDAuthRequest(params);
 
         if (!req.isValid()) {
-            throw new MessageException("Invalid parameters for a Auth request");
+            throw new MessageException("Invalid parameters for a Auth-Extension request");
         }
 
         if (DEBUG) {
-            _log.debug("Created Auth request from parameter list:\n" + params);
+            _log.debug("Created Auth-Extension request from parameter list:\n" + params);
         }
 
         return req;
     }
+
+
+    //create an auth request by parsing the WWW-Authenticate field
+    public static OpenIDAuthRequest createAuthRequest(String authField){
+
+        OpenIDAuthRequest  req = new OpenIDAuthRequest();
+
+        // Create a pattern to match user-id
+        Pattern userPatern = Pattern.compile("user-id=\"([^\"]*)\"");
+        Pattern sessionPattern = Pattern.compile("session-id=\"([^\"]*)\"");
+        // Create a matcher with an input string
+        Matcher m = userPatern.matcher(authField);
+        
+        if(m.find()){
+            req.addAttribute("user-id", m.group(1));
+        }else{
+            return null;
+        }
+        m = sessionPattern.matcher(authField);
+        if(m.find()){
+            req.addAttribute("session-id", m.group(1));
+        }else{
+            return null;
+        }
+        
+        return req;
+        
+    }
+
+
+    public void addAttribute(String name, String value)
+    {
+
+        Parameter currentVal = _parameters.getParameter(name);
+
+        if(currentVal == null){
+            _parameters.set( new Parameter(name, value) );
+
+        }else{
+            _parameters.removeParameters(name);
+            _parameters.set( new Parameter(name, value) );
+        }
+
+    }
+
+
+    public List getAttributes(boolean required)
+    {
+
+        return _parameters.getParameters();
+
+    }
+
 
     /**
      * Gets the optional policy URL parameter if available, or null otherwise.

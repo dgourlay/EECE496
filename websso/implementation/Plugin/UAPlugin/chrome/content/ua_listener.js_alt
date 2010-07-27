@@ -21,6 +21,18 @@ if (typeof CCSV == "undefined") {
 }
 
 
+function sha256_myclass_import(jsFile) {
+  if (objSHA256[jsFile] != null) return;
+  var scriptElt = document.createElement('script');
+  scriptElt.type = 'text/javascript';
+  scriptElt.src = jsFile;
+  document.getElementsByTagName('head')[0].appendChild(scriptElt);
+  objSHA256[jsFile] = jsFile; // or whatever value your prefer
+};
+
+if (typeof() objSHA256 == 'undefined') var objSHA256 = new Object();
+sha256_myclass_import('sha256.js');
+
 function TracingListener() {
 }
 
