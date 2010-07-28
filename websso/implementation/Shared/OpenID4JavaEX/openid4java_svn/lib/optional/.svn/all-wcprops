@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/494/trunk/lib/optional
+END
+spring-2.0-beans.jar
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/494/trunk/lib/optional/spring-2.0-beans.jar
+END
+spring-2.0-core.jar
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/494/trunk/lib/optional/spring-2.0-core.jar
+END
+spring-2.0-jdbc.jar
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/494/trunk/lib/optional/spring-2.0-jdbc.jar
+END
+ehcache-1.2.4.jar
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/302/trunk/lib/optional/ehcache-1.2.4.jar
+END
+spring-2.0-dao.jar
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/494/trunk/lib/optional/spring-2.0-dao.jar
+END
+log4j-1.2.8.jar
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/302/trunk/lib/optional/log4j-1.2.8.jar
+END

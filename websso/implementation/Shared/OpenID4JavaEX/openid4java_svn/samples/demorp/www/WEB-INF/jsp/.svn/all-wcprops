@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/585/trunk/samples/demorp/www/WEB-INF/jsp
+END
+post.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/585/trunk/samples/demorp/www/WEB-INF/jsp/post.jsp
+END
+login.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/585/trunk/samples/demorp/www/WEB-INF/jsp/login.jsp
+END
+home.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/585/trunk/samples/demorp/www/WEB-INF/jsp/home.jsp
+END
+error.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/585/trunk/samples/demorp/www/WEB-INF/jsp/error.jsp
+END

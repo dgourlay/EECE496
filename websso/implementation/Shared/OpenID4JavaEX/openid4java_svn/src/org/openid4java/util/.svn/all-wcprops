@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/631/trunk/src/org/openid4java/util
+END
+InternetDateFormat.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/464/trunk/src/org/openid4java/util/InternetDateFormat.java
+END
+HttpFetcher.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/631/trunk/src/org/openid4java/util/HttpFetcher.java
+END
+HttpUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/631/trunk/src/org/openid4java/util/HttpUtils.java
+END
+OpenID4JavaDOMParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/564/trunk/src/org/openid4java/util/OpenID4JavaDOMParser.java
+END
+HttpCache.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/631/trunk/src/org/openid4java/util/HttpCache.java
+END
+HttpRequestOptions.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/631/trunk/src/org/openid4java/util/HttpRequestOptions.java
+END
+AbstractHttpFetcher.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/631/trunk/src/org/openid4java/util/AbstractHttpFetcher.java
+END
+OpenID4JavaUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/552/trunk/src/org/openid4java/util/OpenID4JavaUtils.java
+END
+HttpClientFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/629/trunk/src/org/openid4java/util/HttpClientFactory.java
+END
+HttpFetcherFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/631/trunk/src/org/openid4java/util/HttpFetcherFactory.java
+END
+HttpResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/631/trunk/src/org/openid4java/util/HttpResponse.java
+END
+ProxyProperties.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/629/trunk/src/org/openid4java/util/ProxyProperties.java
+END

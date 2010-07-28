@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/572/trunk/src/org/openid4java/discovery/xrds
+END
+XrdsParserImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/572/trunk/src/org/openid4java/discovery/xrds/XrdsParserImpl.java
+END
+XrdsServiceEndpoint.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/572/trunk/src/org/openid4java/discovery/xrds/XrdsServiceEndpoint.java
+END
+XrdsParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/552/trunk/src/org/openid4java/discovery/xrds/XrdsParser.java
+END

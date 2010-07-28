@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/631/trunk/src/org/openid4java/discovery
+END
+Identifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/464/trunk/src/org/openid4java/discovery/Identifier.java
+END
+XriIdentifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/548/trunk/src/org/openid4java/discovery/XriIdentifier.java
+END
+UrlIdentifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/465/trunk/src/org/openid4java/discovery/UrlIdentifier.java
+END
+DiscoveryException.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/464/trunk/src/org/openid4java/discovery/DiscoveryException.java
+END
+Discovery.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/631/trunk/src/org/openid4java/discovery/Discovery.java
+END
+xrd.xsd
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/547/trunk/src/org/openid4java/discovery/xrd.xsd
+END
+xrds.xsd
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/547/trunk/src/org/openid4java/discovery/xrds.xsd
+END
+DiscoveryInformation.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/571/trunk/src/org/openid4java/discovery/DiscoveryInformation.java
+END

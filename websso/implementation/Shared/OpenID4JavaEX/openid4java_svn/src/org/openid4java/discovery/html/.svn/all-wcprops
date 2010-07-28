@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/631/trunk/src/org/openid4java/discovery/html
+END
+HtmlParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/511/trunk/src/org/openid4java/discovery/html/HtmlParser.java
+END
+HtmlResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/464/trunk/src/org/openid4java/discovery/html/HtmlResult.java
+END
+CyberNekoDOMHtmlParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/553/trunk/src/org/openid4java/discovery/html/CyberNekoDOMHtmlParser.java
+END
+HtmlResolver.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/631/trunk/src/org/openid4java/discovery/html/HtmlResolver.java
+END

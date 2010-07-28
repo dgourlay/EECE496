@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/554/trunk/samples/simple-openid/src/main/webapp
+END
+index.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/369/trunk/samples/simple-openid/src/main/webapp/index.jsp
+END
+provider.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/456/trunk/samples/simple-openid/src/main/webapp/provider.jsp
+END
+provider_authorization.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/369/trunk/samples/simple-openid/src/main/webapp/provider_authorization.jsp
+END
+consumer_redirect.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/369/trunk/samples/simple-openid/src/main/webapp/consumer_redirect.jsp
+END
+consumer_returnurl.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/234/trunk/samples/simple-openid/src/main/webapp/consumer_returnurl.jsp
+END
+user.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/369/trunk/samples/simple-openid/src/main/webapp/user.jsp
+END
