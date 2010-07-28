@@ -41,7 +41,6 @@ public class SampleServlet extends HttpServlet {
 
     private HashMap<String, ArrayList<String>> userDataStore;
     private HashMap<String, ArrayList<String>> assocHandleStore;
-
     // instantiate a ServerManager object
     public ServerManager manager = new ServerManager();
 
@@ -89,25 +88,28 @@ public class SampleServlet extends HttpServlet {
             // --- process an association request ---
             response = manager.associationResponse(request);
             responseText = response.keyValueFormEncoding();
+
+            //
         } else if ("checkid_setup".equals(mode)
                 || "checkid_immediate".equals(mode)) {
-            // interact with the user and obtain data needed to continue
-            ArrayList<String> userData = userInteraction(request);
 
+            // interact with the user for normal authentication and obtain data needed to continue
+            //NOT IMPLEMENTED
+            //String userSelectedClaimedId = userData.get(0);
+            //Boolean authenticatedAndApproved = Boolean.getBoolean(userData.get(1));
+            //String email = userData.get(2);
 
-            String userSelectedClaimedId = userData.get(0);
-            Boolean authenticatedAndApproved = Boolean.getBoolean(userData.get(1));
-            String email = userData.get(2);
-
-            // --- process an authentication request ---
-            //AuthRequest authReq =
-            //      AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
 
             String opLocalId = null;
 
             AuthRequest authReq =
                     AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
 
+
+             ArrayList<String> userData;
+             String userSelectedClaimedId;
+             Boolean authenticatedAndApproved;
+             String email;
 
             if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH)) {
 
@@ -117,12 +119,18 @@ public class SampleServlet extends HttpServlet {
                     OpenIDAuthRequest aReq = (OpenIDAuthRequest) ext;
 
                     String sessionID = aReq.getParameterValue("session-id");
+                    String userID = aReq.getParameterValue("user-id");
+
+                    userData = userDataStore.get(userID);
+
 
 
                     System.out.println("Success");
 
 
                 }
+            }else{
+                 userData = userDataStore.get(request.getParameterValue("openid.claimed-id"));
             }
 
             // if the user chose a different claimed_id than the one in request
@@ -219,13 +227,10 @@ public class SampleServlet extends HttpServlet {
 
         //TODO:  IMPLEMENT
 
-
-        ArrayList<String> values = new ArrayList<String>();
-
-        return values;
+        return new ArrayList<String>();
     }
 
-    protected void populateUsers(){
+    protected void populateUsers() {
 
         //Create first user
         ArrayList<String> user1 = new ArrayList<String>();
@@ -248,7 +253,7 @@ public class SampleServlet extends HttpServlet {
 
 
         userDataStore.put(user2.get(0), user2);
-   
+
     }
 
     private String directResponse(HttpServletResponse httpResp, String response)
