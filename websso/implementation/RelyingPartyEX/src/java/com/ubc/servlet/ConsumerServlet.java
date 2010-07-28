@@ -36,11 +36,11 @@ import org.openid4java.util.HttpClientFactory;
 import org.openid4java.util.ProxyProperties;
 import org.openid4java.message.OpenIDAuth.*;
 import org.openid4java.message.ParameterList;
-
 /**
  * @author Sutra Zhou
  */
 public class ConsumerServlet extends javax.servlet.http.HttpServlet {
+
 
     /**
      *
@@ -207,6 +207,7 @@ public class ConsumerServlet extends javax.servlet.http.HttpServlet {
             // attempt to associate with the OpenID provider
             // and retrieve one service endpoint for authentication
             DiscoveryInformation discovered = manager.associate(discoveries);
+
 
             // store the discovery information in the user's session
             httpReq.getSession().setAttribute("openid-disc", discovered);

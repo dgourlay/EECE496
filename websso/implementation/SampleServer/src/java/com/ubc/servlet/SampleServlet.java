@@ -39,11 +39,16 @@ import org.openid4java.server.ServerManager;
  */
 public class SampleServlet extends HttpServlet {
 
+    private HashMap<String, ArrayList<String>> userDataStore;
+    private HashMap<String, ArrayList<String>> assocHandleStore;
+
     // instantiate a ServerManager object
     public ServerManager manager = new ServerManager();
 
     public SampleServlet() {
         this("http://localhost:8080/SampleServer/SampleServlet");
+        userDataStore = new HashMap<String, ArrayList<String>>();
+        assocHandleStore = new HashMap<String, ArrayList<String>>();
     }
 
     public SampleServlet(String endPointUrl) {
@@ -87,9 +92,19 @@ public class SampleServlet extends HttpServlet {
         } else if ("checkid_setup".equals(mode)
                 || "checkid_immediate".equals(mode)) {
             // interact with the user and obtain data needed to continue
-            List userData = userInteraction(request);
+            ArrayList<String> userData = userInteraction(request);
 
-            //TESTING
+
+            String userSelectedClaimedId = userData.get(0);
+            Boolean authenticatedAndApproved = Boolean.getBoolean(userData.get(1));
+            String email = userData.get(2);
+
+            // --- process an authentication request ---
+            //AuthRequest authReq =
+            //      AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
+
+            String opLocalId = null;
+
             AuthRequest authReq =
                     AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
 
@@ -100,29 +115,16 @@ public class SampleServlet extends HttpServlet {
                 if (ext instanceof OpenIDAuthRequest) {
 
                     OpenIDAuthRequest aReq = (OpenIDAuthRequest) ext;
+
+                    String sessionID = aReq.getParameterValue("session-id");
+
+
                     System.out.println("Success");
 
 
                 }
             }
 
-
-
-
-
-
-
-
-            //TESTING
-            String userSelectedClaimedId = (String) userData.get(0);
-            Boolean authenticatedAndApproved = (Boolean) userData.get(1);
-            String email = (String) userData.get(2);
-
-            // --- process an authentication request ---
-            //AuthRequest authReq =
-            //      AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
-
-            String opLocalId = null;
             // if the user chose a different claimed_id than the one in request
             if (userSelectedClaimedId != null
                     && userSelectedClaimedId.equals(authReq.getClaimed())) {
@@ -138,17 +140,7 @@ public class SampleServlet extends HttpServlet {
             if (response instanceof DirectError) {
                 return directResponse(httpResp, response.keyValueFormEncoding());
             } else {
-                if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH)) {
 
-                    MessageExtension ext = authReq.getExtension(OpenIDAuthMessage.OPENID_NS_AUTH);
-                    if (ext instanceof OpenIDAuthRequest) {
-
-                        OpenIDAuthRequest aReq = (OpenIDAuthRequest) ext;
-                        System.out.println("Success");
-
-
-                    }
-                }
                 if (authReq.hasExtension(AxMessage.OPENID_NS_AX)) {
                     MessageExtension ext = authReq.getExtension(AxMessage.OPENID_NS_AX);
                     if (ext instanceof FetchRequest) {
@@ -223,12 +215,40 @@ public class SampleServlet extends HttpServlet {
         return responseText;
     }
 
-    protected List userInteraction(ParameterList request) throws ServerException {
+    protected ArrayList<String> userInteraction(ParameterList request) throws ServerException {
 
         //TODO:  IMPLEMENT
+
+
         ArrayList<String> values = new ArrayList<String>();
 
         return values;
+    }
+
+    protected void populateUsers(){
+
+        //Create first user
+        ArrayList<String> user1 = new ArrayList<String>();
+
+        user1.add("http://localhost:8080/SampleServer/derek");  //id
+        user1.add("false");  //logged in
+        user1.add("derekgourlay@gmail.com");  //email
+        user1.add("password");  // password
+        user1.add(""); //assoc_handle
+
+        userDataStore.put(user1.get(0), user1);
+
+        ArrayList<String> user2 = new ArrayList<String>();
+
+        user2.add("http://localhost:8080/SampleServer/myles");  //id
+        user2.add("false");  //logged in
+        user2.add("myles.archer2@gmail.com");  //email
+        user2.add("password");  // password
+        user2.add(""); //assoc_handle
+
+
+        userDataStore.put(user2.get(0), user2);
+   
     }
 
     private String directResponse(HttpServletResponse httpResp, String response)
@@ -265,7 +285,6 @@ public class SampleServlet extends HttpServlet {
 
         try {
             processRequest(request, response);
-            System.out.println("Ran doGet");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -284,7 +303,6 @@ public class SampleServlet extends HttpServlet {
 
         try {
             processRequest(request, response);
-            System.out.println("Ran doPost");
         } catch (Exception e) {
             e.printStackTrace();
         }
