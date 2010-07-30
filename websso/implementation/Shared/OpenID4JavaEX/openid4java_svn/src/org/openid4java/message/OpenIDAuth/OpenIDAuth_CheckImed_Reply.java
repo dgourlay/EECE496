@@ -17,7 +17,7 @@ import org.openid4java.message.ParameterList;
  *
  * @author dgourlay
  */
-public class OpenIDAuthRequest extends OpenIDAuthMessage {
+public class OpenIDAuth_CheckImed_Reply extends OpenIDAuthMessage {
 
     private static Log _log = LogFactory.getLog(OpenIDAuthRequest.class);
     private static final boolean DEBUG = _log.isDebugEnabled();
@@ -25,7 +25,7 @@ public class OpenIDAuthRequest extends OpenIDAuthMessage {
     /**
      * Constructs a Auth Request with an empty parameter list.
      */
-    public OpenIDAuthRequest() {
+    public OpenIDAuth_CheckImed_Reply() {
         if (DEBUG) {
             _log.debug("Created empty Auth request.");
         }
@@ -34,8 +34,8 @@ public class OpenIDAuthRequest extends OpenIDAuthMessage {
     /**
      * Constructs a Auth Request with an empty parameter list.
      */
-    public static OpenIDAuthRequest createFetchRequest() {
-        return new OpenIDAuthRequest();
+    public static OpenIDAuth_CheckImed_Reply createFetchRequest() {
+        return new OpenIDAuth_CheckImed_Reply();
     }
 
     /**
@@ -45,7 +45,7 @@ public class OpenIDAuthRequest extends OpenIDAuthMessage {
      * getExtensionParams method of the Message class, and MUST NOT contain
      * the "openid.<extension_alias>." prefix.
      */
-    protected OpenIDAuthRequest(ParameterList params) {
+    protected OpenIDAuth_CheckImed_Reply(ParameterList params) {
         _parameters = params;
     }
 
@@ -56,9 +56,9 @@ public class OpenIDAuthRequest extends OpenIDAuthMessage {
      * getExtensionParams method of the Message class, and MUST NOT contain
      * the "openid.<extension_alias>." prefix.
      */
-    public static OpenIDAuthRequest createAuthRequest(ParameterList params)
+    public static OpenIDAuth_CheckImed_Reply createAuthRequest(ParameterList params)
             throws MessageException {
-        OpenIDAuthRequest req = new OpenIDAuthRequest(params);
+        OpenIDAuth_CheckImed_Reply req = new OpenIDAuth_CheckImed_Reply(params);
 
         if (!req.isValid()) {
             throw new MessageException("Invalid parameters for a Auth-Extension request");
@@ -71,33 +71,6 @@ public class OpenIDAuthRequest extends OpenIDAuthMessage {
         return req;
     }
 
-
-    //create an auth request by parsing the WWW-Authenticate field
-    public static OpenIDAuthRequest createAuthRequest(String authField){
-
-        OpenIDAuthRequest  req = new OpenIDAuthRequest();
-
-        // Create a pattern to match user-id
-        Pattern userPatern = Pattern.compile("user-id=\"([^\"]*)\"");
-        Pattern sessionPattern = Pattern.compile("session-id=\"([^\"]*)\"");
-        // Create a matcher with an input string
-        Matcher m = userPatern.matcher(authField);
-        
-        if(m.find()){
-            req.addAttribute("user-id", m.group(1));
-        }else{
-            return null;
-        }
-        m = sessionPattern.matcher(authField);
-        if(m.find()){
-            req.addAttribute("session-id", m.group(1));
-        }else{
-            return null;
-        }
-        
-        return req;
-        
-    }
 
 
     public void addAttribute(String name, String value)
@@ -124,6 +97,13 @@ public class OpenIDAuthRequest extends OpenIDAuthMessage {
     }
 
 
+    /**
+     * Gets the optional policy URL parameter if available, or null otherwise.
+     */
+    public String getUpdateUrl() {
+        return _parameters.hasParameter("policy_url")
+                ? _parameters.getParameterValue("policy_url") : null;
+    }
 
     /**
      * Checks the validity of the extension.

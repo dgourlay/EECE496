@@ -7,15 +7,21 @@ package com.ubc.servlet;
 import com.ubc.util.XrdsDocumentBuilder;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.openid4java.association.AssociationException;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.AuthSuccess;
 import org.openid4java.message.DirectError;
@@ -23,6 +29,7 @@ import org.openid4java.message.Message;
 import org.openid4java.message.MessageExtension;
 import org.openid4java.message.OpenIDAuth.OpenIDAuthMessage;
 import org.openid4java.message.OpenIDAuth.OpenIDAuthRequest;
+import org.openid4java.message.OpenIDAuth.OpenIDAuth_CheckImed_Reply;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
@@ -48,6 +55,7 @@ public class SampleServlet extends HttpServlet {
         this("http://localhost:8080/SampleServer/SampleServlet");
         userDataStore = new HashMap<String, ArrayList<String>>();
         assocHandleStore = new HashMap<String, ArrayList<String>>();
+        populateUsers();
     }
 
     public SampleServlet(String endPointUrl) {
@@ -106,12 +114,14 @@ public class SampleServlet extends HttpServlet {
                     AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
 
 
-             ArrayList<String> userData;
-             String userSelectedClaimedId;
-             Boolean authenticatedAndApproved;
-             String email;
+            ArrayList<String> userData;
+            String userSelectedClaimedId = null;
+            Boolean authenticatedAndApproved = false;
+            String email = null;
 
-            if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH)) {
+
+            //Auth Extension only extends checkid_immediate
+            if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH) && mode.equals("checkid_immediate")) {
 
                 MessageExtension ext = authReq.getExtension(OpenIDAuthMessage.OPENID_NS_AUTH);
                 if (ext instanceof OpenIDAuthRequest) {
@@ -121,16 +131,46 @@ public class SampleServlet extends HttpServlet {
                     String sessionID = aReq.getParameterValue("session-id");
                     String userID = aReq.getParameterValue("user-id");
 
+                    //Check if user is in DB and associated
                     userData = userDataStore.get(userID);
+                    //userData.set(1, "true");
+
+                    userSelectedClaimedId = userData.get(0);
+                    authenticatedAndApproved = Boolean.parseBoolean(userData.get(1));
+                    email = userData.get(2);
+
+                    // Check if associated
+                    ArrayList<String> assocData = assocHandleStore.get(userData.get(4));
+//COMMENT DEREK Likes to ride the unicorn =)
+                    if (userData != null && assocData != null) {
+                        //if authenticated
+                        if (authenticatedAndApproved) {
+                            //generate nonce
+                            String nonce = manager.getNonceGenerator().next();
+                            byte[] keyBytes = manager.getSharedAssociations().load(
+                                    userData.get(4)).getMacKey().getEncoded();
+
+                            String key = byteToString(keyBytes);
+                            String id = userSelectedClaimedId;
+                            String handle = userData.get(4);
+
+                            String signed01 = getHash(id + handle + nonce + key);
+
+                            OpenIDAuth_CheckImed_Reply crep = OpenIDAuth_CheckImed_Reply.createFetchRequest();
+                            crep.addAttribute("nonce", nonce);
+                            crep.addAttribute("signature", handle);
 
 
 
-                    System.out.println("Success");
-
+                        }
+                    }
 
                 }
-            }else{
-                 userData = userDataStore.get(request.getParameterValue("openid.claimed-id"));
+            } else {
+                userData = userDataStore.get(request.getParameterValue("openid.claimed_id"));
+                userSelectedClaimedId = null;
+                authenticatedAndApproved = false;
+                email = null;
             }
 
             // if the user chose a different claimed_id than the one in request
@@ -139,6 +179,7 @@ public class SampleServlet extends HttpServlet {
                 //opLocalId = lookupLocalId(userSelectedClaimedId);
             }
 
+            opLocalId = userSelectedClaimedId;
             response = manager.authResponse(request,
                     opLocalId,
                     userSelectedClaimedId,
@@ -199,14 +240,16 @@ public class SampleServlet extends HttpServlet {
                 // caller will need to decide which of the following to use:
 
                 // option1: GET HTTP-redirect to the return_to URL
-                return response.getDestinationUrl(true);
+                return response.keyValueFormEncoding();
+                //return response.getDestinationUrl(true);
+                //return response.wwwFormEncoding();
 
                 // option2: HTML FORM Redirection
                 //RequestDispatcher dispatcher =
                 //        getServletContext().getRequestDispatcher("formredirection.jsp");
                 //httpReq.setAttribute("prameterMap", response.getParameterMap());
                 //httpReq.setAttribute("destinationUrl", response.getDestinationUrl(false));
-                //dispatcher.forward(request, response);
+                //dispatcher.forward(httpReq, httpResp);
                 //return null;
             }
         } else if ("check_authentication".equals(mode)) {
@@ -221,6 +264,7 @@ public class SampleServlet extends HttpServlet {
 
         // return the result to the user
         return responseText;
+
     }
 
     protected ArrayList<String> userInteraction(ParameterList request) throws ServerException {
@@ -235,13 +279,20 @@ public class SampleServlet extends HttpServlet {
         //Create first user
         ArrayList<String> user1 = new ArrayList<String>();
 
-        user1.add("http://localhost:8080/SampleServer/derek");  //id
-        user1.add("false");  //logged in
+        user1.add("http://localhost:8080/SampleServer/SampleServlet");  //id
+        user1.add("true");  //logged in
         user1.add("derekgourlay@gmail.com");  //email
         user1.add("password");  // password
-        user1.add(""); //assoc_handle
+        //user1.add("123456789"); //assoc_handle
+
+        try {
+            user1.add(manager.getSharedAssociations().generate("HMAC-SHA256", 1800).getHandle());
+        } catch (AssociationException ex) {
+            Logger.getLogger(SampleServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         userDataStore.put(user1.get(0), user1);
+        assocHandleStore.put(user1.get(4), user1);
 
         ArrayList<String> user2 = new ArrayList<String>();
 
@@ -253,6 +304,25 @@ public class SampleServlet extends HttpServlet {
 
 
         userDataStore.put(user2.get(0), user2);
+
+    }
+
+    public String getHash(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest hash = MessageDigest.getInstance("SHA-256");
+        //digest.reset();
+
+        byte[] input = hash.digest(password.getBytes("UTF-8"));
+        return byteToString(input);
+
+    }
+
+    public String byteToString(byte[] input) {
+
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < input.length; i++) {
+            sb.append(Integer.toString((input[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
 
     }
 
@@ -289,7 +359,13 @@ public class SampleServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            processRequest(request, response);
+            String responseText = processRequest(request, response);
+
+            response.setContentType("text/html");
+            OutputStream outputStream = response.getOutputStream();
+            //
+            outputStream.write(responseText.getBytes());
+            outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -307,7 +383,11 @@ public class SampleServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            processRequest(request, response);
+            String responseText = processRequest(request, response);
+            response.setContentType("text/html");
+            OutputStream outputStream = response.getOutputStream();
+            outputStream.write(responseText.getBytes());
+            outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -16,6 +16,10 @@
         <servlet-name>Prot_Servlet</servlet-name>
         <servlet-class>com.ubc.servlet.Prot_Servlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>NewServlet</servlet-name>
+        <servlet-class>NewServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ConsumerServlet</servlet-name>
         <url-pattern>/ConsumerServlet</url-pattern>
@@ -31,6 +35,10 @@
     <servlet-mapping>
         <servlet-name>Prot_Servlet</servlet-name>
         <url-pattern>/Prot_Servlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NewServlet</servlet-name>
+        <url-pattern>/NewServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
