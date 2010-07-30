@@ -46,6 +46,11 @@ import org.openid4java.server.ServerManager;
  */
 public class SampleServlet extends HttpServlet {
 
+    private final static int ID_INDEX = 0;
+    private final static int IS_AUTH_INDEX = 1;
+    private final static int EMAIL_INDEX = 2;
+    private final static int PASSWORD_INDEX = 3;
+    private final static int ASSOC_HANDLE_INDEX = 4;
     private HashMap<String, ArrayList<String>> userDataStore;
     private HashMap<String, ArrayList<String>> assocHandleStore;
     // instantiate a ServerManager object
@@ -101,77 +106,24 @@ public class SampleServlet extends HttpServlet {
         } else if ("checkid_setup".equals(mode)
                 || "checkid_immediate".equals(mode)) {
 
-            // interact with the user for normal authentication and obtain data needed to continue
-            //NOT IMPLEMENTED
-            //String userSelectedClaimedId = userData.get(0);
-            //Boolean authenticatedAndApproved = Boolean.getBoolean(userData.get(1));
-            //String email = userData.get(2);
-
-
             String opLocalId = null;
 
             AuthRequest authReq =
                     AuthRequest.createAuthRequest(request, manager.getRealmVerifier());
 
 
-            ArrayList<String> userData;
-            String userSelectedClaimedId = null;
-            Boolean authenticatedAndApproved = false;
-            String email = null;
+            // interact with the user and obtain data needed to continue
 
+            ArrayList<String> userData = userInteraction(request);
 
-            //Auth Extension only extends checkid_immediate
-            if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH) && mode.equals("checkid_immediate")) {
-
-                MessageExtension ext = authReq.getExtension(OpenIDAuthMessage.OPENID_NS_AUTH);
-                if (ext instanceof OpenIDAuthRequest) {
-
-                    OpenIDAuthRequest aReq = (OpenIDAuthRequest) ext;
-
-                    String sessionID = aReq.getParameterValue("session-id");
-                    String userID = aReq.getParameterValue("user-id");
-
-                    //Check if user is in DB and associated
-                    userData = userDataStore.get(userID);
-                    //userData.set(1, "true");
-
-                    userSelectedClaimedId = userData.get(0);
-                    authenticatedAndApproved = Boolean.parseBoolean(userData.get(1));
-                    email = userData.get(2);
-
-                    // Check if associated
-                    ArrayList<String> assocData = assocHandleStore.get(userData.get(4));
-//COMMENT DEREK Likes to ride the unicorn =)
-                    if (userData != null && assocData != null) {
-                        //if authenticated
-                        if (authenticatedAndApproved) {
-                            //generate nonce
-                            String nonce = manager.getNonceGenerator().next();
-                            byte[] keyBytes = manager.getSharedAssociations().load(
-                                    userData.get(4)).getMacKey().getEncoded();
-
-                            String key = byteToString(keyBytes);
-                            String id = userSelectedClaimedId;
-                            String handle = userData.get(4);
-
-                            String signed01 = getHash(id + handle + nonce + key);
-
-                            OpenIDAuth_CheckImed_Reply crep = OpenIDAuth_CheckImed_Reply.createFetchRequest();
-                            crep.addAttribute("nonce", nonce);
-                            crep.addAttribute("signature", handle);
-
-
-
-                        }
-                    }
-
-                }
-            } else {
-                userData = userDataStore.get(request.getParameterValue("openid.claimed_id"));
-                userSelectedClaimedId = null;
-                authenticatedAndApproved = false;
-                email = null;
+            if (userData == null) {
+                throw new Exception();
             }
+
+            String userSelectedClaimedId = userData.get(ID_INDEX);
+            Boolean authenticatedAndApproved = Boolean.parseBoolean(userData.get(IS_AUTH_INDEX));
+            String email = userData.get(EMAIL_INDEX);
+
 
             // if the user chose a different claimed_id than the one in request
             if (userSelectedClaimedId != null
@@ -189,6 +141,46 @@ public class SampleServlet extends HttpServlet {
             if (response instanceof DirectError) {
                 return directResponse(httpResp, response.keyValueFormEncoding());
             } else {
+                //Auth Extension only extends checkid_immediate
+                if (authReq.hasExtension(OpenIDAuthMessage.OPENID_NS_AUTH) && mode.equals("checkid_immediate")) {
+
+                    MessageExtension ext = authReq.getExtension(OpenIDAuthMessage.OPENID_NS_AUTH);
+                    if (ext instanceof OpenIDAuthRequest) {
+
+                        OpenIDAuthRequest aReq = (OpenIDAuthRequest) ext;
+
+                        String userID = aReq.getParameterValue("user-id");
+                        String assocHandle = aReq.getParameterValue("session-id");
+
+                        boolean userValid = isValidUser(userID);
+                        boolean userAssociated = isAssociatedUser(userID, assocHandle);
+
+
+                        if (userValid && userAssociated) {
+                            //generate nonce
+                            String nonce = manager.getNonceGenerator().next();
+
+                            //KLUDGE FOR TESTING
+                            //byte[] keyBytes = manager.getSharedAssociations().load(assocHandle).getMacKey().getEncoded();
+                            //String key = byteToString(keyBytes);
+
+                            String key = "batman";
+                            
+                            String id = userSelectedClaimedId;
+
+                            String signed01 = getHash(id + assocHandle + nonce + key);
+
+                            OpenIDAuth_CheckImed_Reply crep = OpenIDAuth_CheckImed_Reply.createFetchRequest();
+                            crep.addAttribute("nonce", nonce);
+                            crep.addAttribute("signature", signed01);
+
+                            response.addExtension(crep);
+                            System.out.println("woo");
+                        }
+                    }
+
+                }
+
 
                 if (authReq.hasExtension(AxMessage.OPENID_NS_AX)) {
                     MessageExtension ext = authReq.getExtension(AxMessage.OPENID_NS_AX);
@@ -261,17 +253,60 @@ public class SampleServlet extends HttpServlet {
             response = DirectError.createDirectError("Unknown request");
             responseText = response.keyValueFormEncoding();
         }
-
         // return the result to the user
         return responseText;
-
     }
 
     protected ArrayList<String> userInteraction(ParameterList request) throws ServerException {
 
-        //TODO:  IMPLEMENT
+        ArrayList<String> userData;
 
-        return new ArrayList<String>();
+        if (request.getParameterValue("openid.ext1.user-id") != null) {
+
+            userData = userDataStore.get(request.getParameterValue("openid.ext1.user-id"));
+
+        } else if (request.getParameterValue("openid.claimed_id") != null) {
+
+            userData = new ArrayList<String>();
+            userData.add(request.getParameterValue("openid.claimed_id"));
+
+        } else {
+            userData = null;
+
+        }
+        
+        return userData;
+    }
+
+    protected boolean isValidUser(String userName) {
+
+        //Does the database contain this user?
+        if (userDataStore.containsKey(userName)) {
+            ArrayList<String> user = userDataStore.get(userName);
+            //If so, is the user authenticated?
+            if (Boolean.parseBoolean(user.get(IS_AUTH_INDEX))) {
+                return true;
+
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    protected boolean isAssociatedUser(String userName, String assoc_handle) {
+
+        //Does the provided assoc_handle match the handle stored for the user?
+        if (assocHandleStore.containsKey(assoc_handle)) {
+            if (userDataStore.get(userName) == assocHandleStore.get(assoc_handle)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     protected void populateUsers() {
@@ -283,13 +318,8 @@ public class SampleServlet extends HttpServlet {
         user1.add("true");  //logged in
         user1.add("derekgourlay@gmail.com");  //email
         user1.add("password");  // password
-        //user1.add("123456789"); //assoc_handle
+        user1.add("123456789"); //assoc_handle
 
-        try {
-            user1.add(manager.getSharedAssociations().generate("HMAC-SHA256", 1800).getHandle());
-        } catch (AssociationException ex) {
-            Logger.getLogger(SampleServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         userDataStore.put(user1.get(0), user1);
         assocHandleStore.put(user1.get(4), user1);
@@ -302,7 +332,6 @@ public class SampleServlet extends HttpServlet {
         user2.add("password");  // password
         user2.add(""); //assoc_handle
 
-
         userDataStore.put(user2.get(0), user2);
 
     }
@@ -311,18 +340,31 @@ public class SampleServlet extends HttpServlet {
         MessageDigest hash = MessageDigest.getInstance("SHA-256");
         //digest.reset();
 
+
+
         byte[] input = hash.digest(password.getBytes("UTF-8"));
+
+
         return byteToString(input);
+
+
 
     }
 
     public String byteToString(byte[] input) {
 
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < input.length; i++) {
+
+
+        for (int i = 0; i
+                < input.length; i++) {
             sb.append(Integer.toString((input[i] & 0xff) + 0x100, 16).substring(1));
+
+
         }
         return sb.toString();
+
+
 
     }
 
@@ -332,7 +374,11 @@ public class SampleServlet extends HttpServlet {
         os.write(response.getBytes());
         os.close();
 
+
+
         return null;
+
+
     }
 
     public String createXrdsResponse() {
@@ -343,7 +389,11 @@ public class SampleServlet extends HttpServlet {
         documentBuilder.addServiceElement(AxMessage.OPENID_NS_AX, manager.getOPEndpointUrl(), "30");
         documentBuilder.addServiceElement(SRegMessage.OPENID_NS_SREG, manager.getOPEndpointUrl(), "40");
 
+
+
         return documentBuilder.toXmlString();
+
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -366,8 +416,12 @@ public class SampleServlet extends HttpServlet {
             //
             outputStream.write(responseText.getBytes());
             outputStream.close();
+
+
         } catch (Exception e) {
             e.printStackTrace();
+
+
         }
     }
 
@@ -388,8 +442,12 @@ public class SampleServlet extends HttpServlet {
             OutputStream outputStream = response.getOutputStream();
             outputStream.write(responseText.getBytes());
             outputStream.close();
+
+
         } catch (Exception e) {
             e.printStackTrace();
+
+
         }
     }
 
@@ -400,5 +458,6 @@ public class SampleServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
+
     }// </editor-fold>
 }
