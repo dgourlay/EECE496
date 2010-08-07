@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.openid4java.message.OpenIDAuth;
 
 import org.openid4java.message.MessageException;
@@ -10,8 +6,10 @@ import org.openid4java.message.MessageExtensionFactory;
 import org.openid4java.message.ParameterList;
 
 /**
+ * Custom Extension Factory for OpenIDAuth messages. Creates OpenIDAuth message
+ * objects, sets the type URI to http://lersse.ece.ubc.ca/openid/ext/ua/auth/1.0
  *
- * @author dgourlay
+ * @author Derek Gourlay
  */
 public class OpenIDAuthExtensionFactory implements MessageExtensionFactory {
 

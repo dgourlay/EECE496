@@ -30,7 +30,7 @@ public class OpenIDAuthResponse extends OpenIDAuthMessage {
 
 
      /**
-     * Constructs a SReg Response with an empty parameter list.
+     * Constructs a OpenID AuthResponse with an empty parameter list.
      */
     protected OpenIDAuthResponse()
     {
